@@ -8,16 +8,19 @@
 #define WHO_AM_I          0x75
 
 void mpu6050_init(void) {
-    // Wake up the MPU6050 (clear sleep bit)
-    i2c_write_byte(MPU6050_ADDR, PWR_MGMT_1, 0x00);
+    i2c_write_byte(MPU6050_ADDR, 0x6B, 0x00);  // Wake up sensor
+    uart_send_string("MPU Wake command sent\n");
 
-    // Optional: verify device ID
-    unsigned char id = i2c_read_byte(MPU6050_ADDR, WHO_AM_I);
-    if (id != 0x68) {
-        unsigned char id = i2c_read_byte(MPU6050_ADDR, WHO_AM_I);
-        char buffer[32];
-        snprintf(buffer, sizeof(buffer), "MPU ID: 0x%X\n", id);
-        uart_send_string(buffer);
+    unsigned char id = i2c_read_byte(MPU6050_ADDR, WHO_AM_I); // WHO_AM_I
+
+    char buffer[32];
+    snprintf(buffer, sizeof(buffer), "MPU ID: 0x%X\n", id);
+    uart_send_string(buffer);
+
+    if (id == 0x68) {
+        uart_send_string("MPU6050 OK\n");
+    } else {
+        uart_send_string("MPU6050 NOT FOUND\n");
     }
 }
 
