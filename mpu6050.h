@@ -1,4 +1,3 @@
-// mpu6050.h
 #ifndef MPU6050_H_
 #define MPU6050_H_
 

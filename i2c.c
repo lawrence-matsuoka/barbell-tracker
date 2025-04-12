@@ -1,56 +1,54 @@
 #include <msp430.h>
 #include "i2c.h"
 
+#include <msp430.h>
+
 void i2c_init(void) {
-    P4SEL |= BIT1 | BIT2; // P4.1 = SDA, P4.2 = SCL
-    UCB1CTL1 |= UCSWRST; // Put USCI in reset
-    UCB1CTL0 = UCMST | UCMODE_3 | UCSYNC; // Master, I2C mode, synchronous
-    UCB1CTL1 = UCSSEL_2 | UCSWRST; // SMCLK
-    UCB1BR0 = 10; // fSCL = SMCLK / 10
+    // Set P4.1 (SDA), P4.2 (SCL) to I2C mode
+    P4SEL |= BIT1 | BIT2;
+
+    UCB1CTL1 |= UCSWRST;                     // Put eUSCI_B in reset
+    UCB1CTL0 = UCMST | UCMODE_3 | UCSYNC;    // I2C Master, synchronous
+    UCB1CTL1 = UCSSEL_2 | UCSWRST;           // Use SMCLK, still in reset
+    UCB1BR0 = 10;                            // 100kHz @ 1MHz SMCLK
     UCB1BR1 = 0;
-    UCB1CTL1 &= ~UCSWRST; // Clear reset
+    UCB1I2CSA = 0x68;                        // MPU6050 default address
+
+    UCB1CTL1 &= ~UCSWRST;                    // Release from reset
+    UCB1IE = 0;                              // Disable interrupts (for now)
 }
 
-void i2c_write_byte(uint8_t dev_addr, uint8_t reg_addr, uint8_t data) {
-    while (UCB1CTL1 & UCTXSTP); // Wait if stop is sent
 
-    UCB1I2CSA = dev_addr;
-    UCB1CTL1 |= UCTR + UCTXSTT; // Transmit mode and start
+void i2c_write_byte(unsigned char addr, unsigned char reg, unsigned char data) {
+    while (UCB1CTL1 & UCTXSTP); // Wait for stop
 
+    UCB1I2CSA = addr;
+    UCB1CTL1 |= UCTR + UCTXSTT; // Transmitter + Start
     while (!(UCB1IFG & UCTXIFG));
-    UCB1TXBUF = reg_addr; // Register address
-
+    UCB1TXBUF = reg;
     while (!(UCB1IFG & UCTXIFG));
-    UCB1TXBUF = data; // Data
-
+    UCB1TXBUF = data;
     while (!(UCB1IFG & UCTXIFG));
-    UCB1CTL1 |= UCTXSTP; // Send stop
+    UCB1CTL1 |= UCTXSTP; // Stop
     while (UCB1CTL1 & UCTXSTP);
 }
 
-void i2c_read_bytes(uint8_t dev_addr, uint8_t reg_addr, uint8_t *data, uint8_t length) {
-    while (UCB1CTL1 & UCTXSTP); // Wait if stop is sent
-
-    UCB1I2CSA = dev_addr;
-    UCB1CTL1 |= UCTR + UCTXSTT; // Write mode to send register
-
-    while (!(UCB1IFG & UCTXIFG));
-    UCB1TXBUF = reg_addr;
-
-    while (!(UCB1IFG & UCTXIFG));
-    UCB1CTL1 &= ~UCTR;           // Read mode
-    UCB1CTL1 |= UCTXSTT;         // Restart
-
-    while (UCB1CTL1 & UCTXSTT);  // Wait for start to be sent
-
-    uint8_t i;
-    for (i = 0; i < length; i++) {
-        if (i == length - 1) {
-            UCB1CTL1 |= UCTXSTP; // Send stop after last byte
-        }
-        while (!(UCB1IFG & UCRXIFG));
-        data[i] = UCB1RXBUF;
-    }
+unsigned char i2c_read_byte(unsigned char addr, unsigned char reg) {
+    unsigned char value;
 
     while (UCB1CTL1 & UCTXSTP);
+    UCB1I2CSA = addr;
+    UCB1CTL1 |= UCTR + UCTXSTT;
+    while (!(UCB1IFG & UCTXIFG));
+    UCB1TXBUF = reg;
+    while (!(UCB1IFG & UCTXIFG));
+    UCB1CTL1 &= ~UCTR; // Receiver mode
+    UCB1CTL1 |= UCTXSTT;
+    while (UCB1CTL1 & UCTXSTT);
+    while (!(UCB1IFG & UCRXIFG));
+    value = UCB1RXBUF;
+    UCB1CTL1 |= UCTXSTP;
+
+    return value;
 }
+

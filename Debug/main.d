@@ -2,8 +2,9 @@
 
 main.obj: ../main.c
 main.obj: ../lcd.h
-main.obj: ../mpu6050.h
 main.obj: ../uart.h
+main.obj: ../i2c.h
+main.obj: ../mpu6050.h
 main.obj: /home/lawrence/ti/ccs1281/ccs/ccs_base/msp430/include/msp430.h
 main.obj: /home/lawrence/ti/ccs1281/ccs/ccs_base/msp430/include/msp430f5529.h
 main.obj: /home/lawrence/ti/ccs1281/ccs/ccs_base/msp430/include/in430.h
@@ -21,9 +22,11 @@ main.obj: /home/lawrence/ti/ccs1281/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/
 
 ../lcd.h:
 
-../mpu6050.h:
-
 ../uart.h:
+
+../i2c.h:
+
+../mpu6050.h:
 
 /home/lawrence/ti/ccs1281/ccs/ccs_base/msp430/include/msp430.h:
 
