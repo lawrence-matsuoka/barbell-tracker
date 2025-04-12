@@ -1,3 +1,4 @@
+"./i2c.obj"
 "./lcd.obj"
 "./main.obj"
 "./mpu6050.obj"

@@ -8,6 +8,7 @@ GEN_OPTS__FLAG :=
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
+"./i2c.obj" \
 "./lcd.obj" \
 "./main.obj" \
 "./mpu6050.obj" \
@@ -136,15 +137,15 @@ all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 barbell-tracker.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: MSP430 Linker'
-	"/home/lawrence/ti/ccs1281/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/bin/cl430" -vmspx --data_model=restricted --use_hw_mpy=F5 --advice:power=all --define=__MSP430F5529__ -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU23 --silicon_errata=CPU40 -z -m"barbell-tracker.map" --heap_size=160 --stack_size=160 --cinit_hold_wdt=on -i"/home/lawrence/ti/ccs1281/ccs/ccs_base/msp430/include" -i"/home/lawrence/ti/ccs1281/ccs/ccs_base/msp430/lib/5xx_6xx_FRxx" -i"/home/lawrence/ti/ccs1281/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/lib" -i"/home/lawrence/ti/ccs1281/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="barbell-tracker_linkInfo.xml" --use_hw_mpy=F5 --rom_model -o "barbell-tracker.out" $(ORDERED_OBJS)
+	"/home/lawrence/ti/ccs1281/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/bin/cl430" -vmspx --data_model=restricted --use_hw_mpy=F5 --advice:power="all" --define=__MSP430F5529__ -g --printf_support=full --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU23 --silicon_errata=CPU40 -z -m"barbell-tracker.map" --heap_size=160 --stack_size=160 --cinit_hold_wdt=on -i"/home/lawrence/ti/ccs1281/ccs/ccs_base/msp430/include" -i"/home/lawrence/ti/ccs1281/ccs/ccs_base/msp430/lib/5xx_6xx_FRxx" -i"/home/lawrence/ti/ccs1281/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/lib" -i"/home/lawrence/ti/ccs1281/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="barbell-tracker_linkInfo.xml" --use_hw_mpy=F5 --rom_model -o "barbell-tracker.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "lcd.obj" "main.obj" "mpu6050.obj" "uart.obj" 
-	-$(RM) "lcd.d" "main.d" "mpu6050.d" "uart.d" 
+	-$(RM) "i2c.obj" "lcd.obj" "main.obj" "mpu6050.obj" "uart.obj" 
+	-$(RM) "i2c.d" "lcd.d" "main.d" "mpu6050.d" "uart.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

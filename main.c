@@ -4,39 +4,43 @@
 #include <msp430.h>
 #include <stdio.h>
 
-unsigned int ax, ay, az;
-char buffer[17];
 
-int main(void) {
+void main(void) {
+    WDTCTL = WDTPW | WDTHOLD;   // Stop watchdog timer
 
-  WDTCTL = WDTPW | WDTHOLD; // stop watchdog timer
+    uart_init();
+    uart_send_string("uart works\n");
 
-  uart_init();
-  uart_send_string("uart works\n");
+    // Initialize modules
+    lcd_init();
+//    mpu6050_init();
 
-  lcd_init();
-  mpu6050_init();
+    lcd_clear();
+    lcd_set_cursor(0, 0);
+    lcd_print("Hello World");
 
-  while (1) {
-    mpu6050_read_accel(&ax, &ay, &az);
+    while (1);
+//    __delay_cycles(1000000);
 
+/*    while (1) {
+        float ax, ay, az;
+        char buffer[16];
 
+        mpu6050_read_accel(&ax, &ay, &az);
 
-    //lcd_clear();
-    lcd_goto_xy(0, 0);
-    snprintf(buffer, 16, "X:%d", ax);
-    lcd_print(buffer);
+        // Calculate velocity and displacement (basic)
+        // v = a * dt; s += v * dt (not shown here, for simplicity)
+        // Just show acceleration for now
 
-    lcd_goto_xy(1, 0);
-    snprintf(buffer, 16, "Y:%d Z:%d", ay, az);
-    lcd_print(buffer);
+        lcd_set_cursor(0, 0);
+        snprintf(buffer, 16, "Ax:%.2f", ax);
+        lcd_print(buffer);
 
-    // Debugging
-    snprintf(buffer, 64, "AX:%d AY:%d AZ:%d\n", ax, ay, az);
-    uart_send_string(buffer);
+        lcd_set_cursor(1, 0);
+        snprintf(buffer, 16, "Az:%.2f", az);
+        lcd_print(buffer);
 
-    __delay_cycles(500000); // Delay ~0.5 sec
-  }
-
-  return 0;
+        __delay_cycles(1000000); // 1 sec delay (adjust as needed)
+    }*/
 }
+
