@@ -34,5 +34,7 @@ Getting everything working in one go is impossible for anyone at my level of stu
 - 8 data bits, no parity, 1 stop bit
 
 ## Final Product
-![The final working prototype](final.jpg)
+
+![The final working prototype](docs/final.jpg)
+
 And here we've got the final product. I tested it with some reps doing barbell squats as a bit of rehab as I get back into the gym after breaking my elbow. Hopefully I can refine this design at a later date when I am also healthier to get some rigorous testing with heavy squats, snatches, and clean & jerks. Ideally, I think I would use one of those designs that has the wire attached to the bar, with the main device on the ground. But I think I will leave that for another time.
